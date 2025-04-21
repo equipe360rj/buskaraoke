@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Busca de Músicas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      padding: 20px;
+    }
+    #search {
+      width: 300px;
+      padding: 8px;
+      font-size: 16px;
+    }
+    #results {
+      margin-top: 20px;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+    .row {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .row p {
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <h2>Buscar Músicas</h2>
+  <input type="text" id="search" placeholder="Digite número, artista ou música...">
+  <div id="results"></div>
+
+  <script src="dados.js"></script>
+  <script>
+    document.getElementById('search').addEventListener('input', function () {
+      const termo = this.value.toLowerCase();
+      const resultados = dados.filter(item =>
+        item.numero.includes(termo) ||
+        item.artista.toLowerCase().includes(termo) ||
+        item.musica.toLowerCase().includes(termo)
+      );
+
+      const divResultados = document.getElementById('results');
+      divResultados.innerHTML = '';
+
+      if (resultados.length === 0) {
+        divResultados.innerHTML = '<p>Nenhum resultado encontrado.</p>';
+        return;
+      }
+
+      resultados.forEach(row => {
+        const div = document.createElement('div');
+        div.className = 'row';
+
+        div.innerHTML = `
+          <p>${row.numero}</p>
+          <p>${row.artista}</p>
+          <p>${row.musica}</p>
+        `;
+
+        divResultados.appendChild(div);
+      });
+    });
+  </script>
+</body>
+</html>
