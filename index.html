@@ -1,70 +1,79 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Busca de Músicas</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f7f7f7;
-      padding: 20px;
-    }
-    #search {
-      width: 300px;
-      padding: 8px;
-      font-size: 16px;
-    }
-    #results {
-      margin-top: 20px;
-      background: #fff;
-      border: 1px solid #ccc;
-      padding: 10px;
-    }
-    .row {
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .row p {
-      margin: 4px 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Músicas - NeoKaraoke</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h2>Buscar Músicas</h2>
-  <input type="text" id="search" placeholder="Digite número, artista ou música...">
-  <div id="results"></div>
+<body class="bg-black text-white flex flex-col items-center min-h-screen p-4">
+    <!-- Imagem -->
+    <img src="image.png" alt="NeoKaraoke Logo" class="w-32 h-32 mb-4 object-contain">
 
-  <script src="dados.js"></script>
-  <script>
-    document.getElementById('search').addEventListener('input', function () {
-      const termo = this.value.toLowerCase();
-      const resultados = dados.filter(item =>
-        item.numero.includes(termo) ||
-        item.artista.toLowerCase().includes(termo) ||
-        item.musica.toLowerCase().includes(termo)
-      );
+    <!-- Barra de busca e botão -->
+    <div class="w-full max-w-md flex flex-col sm:flex-row gap-2 mb-4">
+        <input type="text" id="searchInput" placeholder="Digite uma música ou artista..." class="flex-grow p-2 rounded-lg border border-gray-600 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button id="searchButton" class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition">Pesquisar</button>
+    </div>
 
-      const divResultados = document.getElementById('results');
-      divResultados.innerHTML = '';
+    <!-- Área de resultados -->
+    <div id="results" class="w-full max-w-md bg-gray-900 rounded-lg shadow-md p-4 hidden">
+        <h2 class="text-lg font-semibold mb-2 text-white">Resultados</h2>
+        <ul id="resultsList" class="list-disc pl-5 text-gray-200"></ul>
+    </div>
 
-      if (resultados.length === 0) {
-        divResultados.innerHTML = '<p>Nenhum resultado encontrado.</p>';
-        return;
-      }
+    <script>
+        // Função para carregar e buscar no JSON
+        async function searchSongs() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            const resultsContainer = document.getElementById('results');
+            const resultsList = document.getElementById('resultsList');
 
-      resultados.forEach(row => {
-        const div = document.createElement('div');
-        div.className = 'row';
+            // Limpar resultados anteriores
+            resultsList.innerHTML = '';
+            resultsContainer.classList.add('hidden');
 
-        div.innerHTML = `
-          <p>${row.numero}</p>
-          <p>${row.artista}</p>
-          <p>${row.musica}</p>
-        `;
+            if (!query) {
+                return;
+            }
 
-        divResultados.appendChild(div);
-      });
-    });
-  </script>
+            try {
+                // Carregar o arquivo dados.json
+                const response = await fetch('dados.json');
+                if (!response.ok) throw new Error('Erro ao carregar o arquivo JSON');
+                const songs = await response.json();
+
+                // Filtrar músicas que contêm a expressão
+                const filteredSongs = songs.filter(song => song.toLowerCase().includes(query));
+
+                if (filteredSongs.length > 0) {
+                    // Exibir resultados
+                    filteredSongs.forEach(song => {
+                        const li = document.createElement('li');
+                        li.textContent = song;
+                        resultsList.appendChild(li);
+                    });
+                    resultsContainer.classList.remove('hidden');
+                } else {
+                    resultsList.innerHTML = '<li class="text-gray-400">Nenhuma música encontrada.</li>';
+                    resultsContainer.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                resultsList.innerHTML = '<li class="text-red-400">Erro ao buscar músicas. Verifique o arquivo JSON.</li>';
+                resultsContainer.classList.remove('hidden');
+            }
+        }
+
+        // Evento do botão de pesquisa
+        document.getElementById('searchButton').addEventListener('click', searchSongs);
+
+        // Evento para pesquisar ao pressionar Enter
+        document.getElementById('searchInput').addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                searchSongs();
+            }
+        });
+    </script>
 </body>
 </html>
