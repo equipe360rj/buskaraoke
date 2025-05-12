@@ -40,6 +40,11 @@
     </div>
 
     <script>
+        // Função para remover acentos de uma string
+        function removeAccents(str) {
+            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+
         // Função para carregar e buscar no JSON
         async function searchSongs() {
             const query = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -60,8 +65,13 @@
                 if (!response.ok) throw new Error('Erro ao carregar o arquivo JSON');
                 const songs = await response.json();
 
-                // Filtrar músicas que contêm a expressão
-                const filteredSongs = songs.filter(song => song.toLowerCase().includes(query));
+                // Normalizar a query para remover acentos
+                const normalizedQuery = removeAccents(query);
+
+                // Filtrar músicas que contêm a expressão (ignorando acentos)
+                const filteredSongs = songs.filter(song => 
+                    removeAccents(song.toLowerCase()).includes(normalizedQuery)
+                );
 
                 if (filteredSongs.length > 0) {
                     // Exibir resultados
