@@ -65,13 +65,20 @@
                 if (!response.ok) throw new Error('Erro ao carregar o arquivo JSON');
                 const songs = await response.json();
 
-                // Normalizar a query para remover acentos
-                const normalizedQuery = removeAccents(query);
+                let filteredSongs;
 
-                // Filtrar músicas que contêm a expressão (ignorando acentos)
-                const filteredSongs = songs.filter(song => 
-                    removeAccents(song.toLowerCase()).includes(normalizedQuery)
-                );
+                // Se a query for "@", mostrar todas as músicas
+                if (query === '@') {
+                    filteredSongs = songs;
+                } else {
+                    // Normalizar a query para remover acentos
+                    const normalizedQuery = removeAccents(query);
+
+                    // Filtrar músicas que contêm a expressão (ignorando acentos)
+                    filteredSongs = songs.filter(song => 
+                        removeAccents(song.toLowerCase()).includes(normalizedQuery)
+                    );
+                }
 
                 if (filteredSongs.length > 0) {
                     // Exibir resultados
