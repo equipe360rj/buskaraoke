@@ -17,6 +17,7 @@
                     colors: {
                         neonPurple: '#a855f7',
                         neonBlue: '#3b82f6',
+                        whatsapp: '#25D366',
                         glass: 'rgba(30, 41, 59, 0.7)',
                     }
                 }
@@ -24,21 +25,21 @@
         }
     </script>
     <style>
-        /* Animação suave de fundo */
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
             background-attachment: fixed;
         }
-        /* Scrollbar personalizada */
-        ::-webkit-scrollbar {
-            width: 8px;
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #4c1d95; border-radius: 4px; }
+        
+        /* Animação do Modal */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
-        ::-webkit-scrollbar-track {
-            background: #0f172a; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #4c1d95; 
-            border-radius: 4px;
+        .modal-animate {
+            animation: fadeIn 0.2s ease-out forwards;
         }
     </style>
 </head>
@@ -51,9 +52,10 @@
             <img src="image.png" alt="NeoKaraoke Logo" class="relative w-40 h-40 object-contain drop-shadow-2xl">
         </div>
 
-        <h1 class="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+        <h1 class="text-3xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
             Busca Karaokê
         </h1>
+        <p class="text-gray-400 text-sm mb-8">Encontra a tua música e pede ao DJ!</p>
 
         <div class="w-full flex flex-col sm:flex-row gap-3 mb-8 relative z-10">
             <input type="text" id="searchInput" 
@@ -73,36 +75,6 @@
             <ul id="resultsList" class="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
                 </ul>
         </div>
-
-        <div class="w-full bg-glass backdrop-blur-md rounded-2xl shadow-2xl p-6 border border-white/10">
-            <h2 class="text-xl font-semibold mb-4 text-blue-300 border-b border-white/10 pb-2 flex items-center gap-2">
-                🔥 Top 10 Mais Pedidas
-            </h2>
-            <ol class="list-none space-y-3">
-                <li class="flex items-center gap-3 p-2 hover:bg-white/5 rounded-lg transition">
-                    <span class="text-2xl font-bold text-yellow-500 w-8 text-center">1</span>
-                    <div class="flex-col flex">
-                        <span class="font-bold text-white">EVIDÊNCIAS</span>
-                        <span class="text-sm text-gray-400">CHITÃOZINHO E XORORÓ</span>
-                    </div>
-                </li>
-                <li class="flex items-center gap-3 p-2 hover:bg-white/5 rounded-lg transition">
-                    <span class="text-2xl font-bold text-gray-400 w-8 text-center">2</span>
-                    <div class="flex-col flex">
-                        <span class="font-bold text-white">BALADA</span>
-                        <span class="text-sm text-gray-400">GUSTTAVO LIMA</span>
-                    </div>
-                </li>
-                <li class="flex items-center gap-3 p-2 hover:bg-white/5 rounded-lg transition">
-                    <span class="text-2xl font-bold text-orange-700 w-8 text-center">3</span>
-                    <div class="flex-col flex">
-                        <span class="font-bold text-white">SHOW DAS PODEROSAS</span>
-                        <span class="text-sm text-gray-400">ANITTA</span>
-                    </div>
-                </li>
-                <li class="text-center text-gray-500 text-sm mt-2 italic">...e muitos outros clássicos!</li>
-            </ol>
-        </div>
         
         <footer class="mt-10 text-gray-500 text-sm mb-4">
             &copy; 2025 NeoKaraoke 360RJ
@@ -110,25 +82,97 @@
 
     </div>
 
+    <div id="nameModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-[#1e1b4b] border border-neonPurple/50 rounded-2xl shadow-[0_0_40px_rgba(168,85,247,0.4)] w-full max-w-sm p-6 modal-animate relative">
+            
+            <h3 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                🎤 Quem vai cantar?
+            </h3>
+            
+            <p class="text-gray-400 text-sm mb-1">Música escolhida:</p>
+            <p id="modalSongName" class="text-neonBlue font-semibold mb-6 border-b border-white/10 pb-2">
+                </p>
+
+            <label for="userNameInput" class="block text-sm text-gray-300 mb-2">Seu nome:</label>
+            <input type="text" id="userNameInput" 
+                placeholder="Ex: João Silva" 
+                class="w-full p-3 rounded-lg bg-black/40 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-whatsapp mb-6"
+            >
+
+            <div class="flex gap-3">
+                <button onclick="closeModal()" class="flex-1 py-3 rounded-lg border border-white/20 text-gray-300 hover:bg-white/10 transition">
+                    Cancelar
+                </button>
+                <button onclick="confirmSend()" class="flex-1 py-3 rounded-lg bg-whatsapp text-white font-bold hover:bg-green-600 transition shadow-lg">
+                    Enviar 🚀
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Função para remover acentos de uma string
+        // ======================================================
+        // ⚠️ CONFIGURAÇÃO DO WHATSAPP
+        const numeroWhatsApp = "5521999999999"; 
+        // ======================================================
+
+        let selectedSong = ""; // Variável para guardar a música clicada
+
         function removeAccents(str) {
             return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         }
 
-        // Função para carregar e buscar no JSON
+        // --- Funções do Modal ---
+
+        function openModal(musica) {
+            selectedSong = musica; // Guarda a música
+            document.getElementById('modalSongName').textContent = musica; // Mostra no modal
+            document.getElementById('userNameInput').value = ""; // Limpa o input de nome
+            
+            // Exibe o modal
+            const modal = document.getElementById('nameModal');
+            modal.classList.remove('hidden');
+            
+            // Foca no input de nome automaticamente
+            setTimeout(() => document.getElementById('userNameInput').focus(), 100);
+        }
+
+        function closeModal() {
+            document.getElementById('nameModal').classList.add('hidden');
+        }
+
+        function confirmSend() {
+            const nameInput = document.getElementById('userNameInput');
+            const nome = nameInput.value.trim();
+
+            if (!nome) {
+                alert("Por favor, digite seu nome!");
+                nameInput.focus();
+                return;
+            }
+
+            // Cria a mensagem personalizada
+            const texto = `Olá! Sou *${nome}* e gostaria de cantar a música: \n\n🎵 *${selectedSong}*`;
+            
+            const textoCodificado = encodeURIComponent(texto);
+            const url = `https://wa.me/${5521988550613}?text=${textoCodificado}`;
+            
+            // Fecha modal e abre whats
+            closeModal();
+            window.open(url, '_blank');
+        }
+
+        // --- Funções de Busca ---
+
         async function searchSongs() {
             const queryInput = document.getElementById('searchInput');
             const query = queryInput.value.trim().toLowerCase();
             const resultsContainer = document.getElementById('results');
             const resultsList = document.getElementById('resultsList');
-
-            // Feedback visual de carregamento (Opcional)
             const searchBtn = document.getElementById('searchButton');
             const originalBtnText = searchBtn.innerText;
-            searchBtn.innerText = "⏳ ...";
 
-            // Limpar resultados anteriores
+            searchBtn.innerText = "⏳ ...";
             resultsList.innerHTML = '';
             resultsContainer.classList.add('hidden');
 
@@ -138,14 +182,12 @@
             }
 
             try {
-                // Carregar o arquivo dados.json
                 const response = await fetch('dados.json');
                 if (!response.ok) throw new Error('Erro ao carregar o arquivo JSON');
                 const songs = await response.json();
 
                 let filteredSongs;
 
-                // Se a query for "@", mostrar todas as músicas
                 if (query === '@') {
                     filteredSongs = songs;
                 } else {
@@ -156,16 +198,24 @@
                 }
 
                 if (filteredSongs.length > 0) {
-                    // Exibir resultados
                     filteredSongs.forEach(song => {
                         const li = document.createElement('li');
-                        // Adicionando classes Tailwind ao item gerado dinamicamente
-                        li.className = "bg-white/5 p-3 rounded-lg border-l-4 border-neonPurple hover:bg-white/10 transition cursor-default text-gray-200";
-                        li.textContent = song;
+                        
+                        li.className = "group flex justify-between items-center bg-white/5 p-3 rounded-lg border-l-4 border-neonPurple hover:bg-neonPurple/20 transition cursor-pointer text-gray-200 hover:text-white";
+                        
+                        li.innerHTML = `
+                            <span class="font-medium truncate pr-2">${song}</span>
+                            <span class="text-xs bg-neonBlue text-white px-3 py-1 rounded-full font-bold shadow-lg opacity-80 group-hover:opacity-100 transition whitespace-nowrap">
+                                Escolher 👆
+                            </span>
+                        `;
+                        
+                        // Ao clicar, ABRE O MODAL em vez de ir direto pro Whats
+                        li.onclick = () => openModal(song);
+                        
                         resultsList.appendChild(li);
                     });
                     resultsContainer.classList.remove('hidden');
-                    // Scroll suave até os resultados
                     resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else {
                     resultsList.innerHTML = `
@@ -176,22 +226,30 @@
                 }
             } catch (error) {
                 console.error('Erro:', error);
-                resultsList.innerHTML = '<li class="text-red-400 text-center">Erro ao buscar músicas. Verifique o arquivo dados.json.</li>';
+                resultsList.innerHTML = '<li class="text-red-400 text-center">Erro ao buscar músicas.</li>';
                 resultsContainer.classList.remove('hidden');
             } finally {
                 searchBtn.innerText = originalBtnText;
             }
         }
 
-        // Evento do botão de pesquisa
+        // Eventos
         document.getElementById('searchButton').addEventListener('click', searchSongs);
-
-        // Evento para pesquisar ao pressionar Enter
+        
         document.getElementById('searchInput').addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                searchSongs();
-            }
+            if (event.key === 'Enter') searchSongs();
         });
+
+        // Enviar com Enter dentro do Modal também
+        document.getElementById('userNameInput').addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') confirmSend();
+        });
+
+        // Fechar modal clicando fora (opcional)
+        document.getElementById('nameModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('nameModal')) closeModal();
+        });
+
     </script>
 </body>
 </html>
