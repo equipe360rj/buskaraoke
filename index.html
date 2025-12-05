@@ -72,7 +72,7 @@
             <h2 class="text-xl font-semibold mb-4 text-purple-300 border-b border-white/10 pb-2 flex items-center gap-2">
                 🎵 Resultados
             </h2>
-            <ul id="resultsList" class="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+            <ul id="resultsList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
                 </ul>
         </div>
         
@@ -90,7 +90,7 @@
             </h3>
             
             <p class="text-gray-400 text-sm mb-1">Música escolhida:</p>
-            <p id="modalSongName" class="text-neonBlue font-semibold mb-6 border-b border-white/10 pb-2">
+            <p id="modalSongName" class="text-neonBlue font-semibold mb-6 border-b border-white/10 pb-2 break-words leading-tight">
                 </p>
 
             <label for="userNameInput" class="block text-sm text-gray-300 mb-2">Seu nome:</label>
@@ -116,7 +116,7 @@
         const numeroWhatsApp = "5521999999999"; 
         // ======================================================
 
-        let selectedSong = ""; // Variável para guardar a música clicada
+        let selectedSong = ""; 
 
         function removeAccents(str) {
             return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -125,15 +125,11 @@
         // --- Funções do Modal ---
 
         function openModal(musica) {
-            selectedSong = musica; // Guarda a música
-            document.getElementById('modalSongName').textContent = musica; // Mostra no modal
-            document.getElementById('userNameInput').value = ""; // Limpa o input de nome
-            
-            // Exibe o modal
+            selectedSong = musica;
+            document.getElementById('modalSongName').textContent = musica;
+            document.getElementById('userNameInput').value = "";
             const modal = document.getElementById('nameModal');
             modal.classList.remove('hidden');
-            
-            // Foca no input de nome automaticamente
             setTimeout(() => document.getElementById('userNameInput').focus(), 100);
         }
 
@@ -151,13 +147,10 @@
                 return;
             }
 
-            // Cria a mensagem personalizada
             const texto = `Olá! Sou *${nome}* e gostaria de cantar a música: \n\n🎵 *${selectedSong}*`;
-            
             const textoCodificado = encodeURIComponent(texto);
-            const url = `https://wa.me/${5521988550613}?text=${textoCodificado}`;
+            const url = `https://wa.me/${numeroWhatsApp}?text=${textoCodificado}`;
             
-            // Fecha modal e abre whats
             closeModal();
             window.open(url, '_blank');
         }
@@ -201,16 +194,22 @@
                     filteredSongs.forEach(song => {
                         const li = document.createElement('li');
                         
+                        // Layout da linha: Texto à esquerda, Seta à direita
                         li.className = "group flex justify-between items-center bg-white/5 p-3 rounded-lg border-l-4 border-neonPurple hover:bg-neonPurple/20 transition cursor-pointer text-gray-200 hover:text-white";
                         
+                        // HTML Atualizado:
+                        // 1. Texto com break-words (quebra de linha) em vez de truncate
+                        // 2. Ícone de seta SVG à direita
                         li.innerHTML = `
-                            <span class="font-medium truncate pr-2">${song}</span>
-                            <span class="text-xs bg-neonBlue text-white px-3 py-1 rounded-full font-bold shadow-lg opacity-80 group-hover:opacity-100 transition whitespace-nowrap">
-                                Escolher 👆
-                            </span>
+                            <span class="font-medium text-sm sm:text-base break-words flex-1 pr-4 leading-snug">${song}</span>
+                            
+                            <div class="flex-shrink-0 bg-neonBlue/20 text-neonBlue p-2 rounded-full group-hover:bg-neonBlue group-hover:text-white transition-all duration-300 shadow-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                </svg>
+                            </div>
                         `;
                         
-                        // Ao clicar, ABRE O MODAL em vez de ir direto pro Whats
                         li.onclick = () => openModal(song);
                         
                         resultsList.appendChild(li);
@@ -235,17 +234,12 @@
 
         // Eventos
         document.getElementById('searchButton').addEventListener('click', searchSongs);
-        
         document.getElementById('searchInput').addEventListener('keypress', (event) => {
             if (event.key === 'Enter') searchSongs();
         });
-
-        // Enviar com Enter dentro do Modal também
         document.getElementById('userNameInput').addEventListener('keypress', (event) => {
             if (event.key === 'Enter') confirmSend();
         });
-
-        // Fechar modal clicando fora (opcional)
         document.getElementById('nameModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('nameModal')) closeModal();
         });
