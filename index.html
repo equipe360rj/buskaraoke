@@ -112,8 +112,8 @@
 
     <script>
         // ======================================================
-        // ⚠️ CONFIGURAÇÃO DO WHATSAPP
-        const numeroWhatsApp = "5521999999999"; 
+        // ⚠️ CONFIGURAÇÃO DO WHATSAPP (Seu número inserido aqui)
+        const numeroWhatsApp = "5521988550613"; 
         // ======================================================
 
         let selectedSong = ""; 
@@ -147,8 +147,11 @@
                 return;
             }
 
+            // Cria a mensagem: "Olá! Sou [Nome] e gostaria de cantar: [Música]"
             const texto = `Olá! Sou *${nome}* e gostaria de cantar a música: \n\n🎵 *${selectedSong}*`;
             const textoCodificado = encodeURIComponent(texto);
+            
+            // Link direto para o teu número
             const url = `https://wa.me/${numeroWhatsApp}?text=${textoCodificado}`;
             
             closeModal();
@@ -175,6 +178,7 @@
             }
 
             try {
+                // Certifique-se que o arquivo 'dados.json' está na mesma pasta
                 const response = await fetch('dados.json');
                 if (!response.ok) throw new Error('Erro ao carregar o arquivo JSON');
                 const songs = await response.json();
@@ -197,9 +201,7 @@
                         // Layout da linha: Texto à esquerda, Seta à direita
                         li.className = "group flex justify-between items-center bg-white/5 p-3 rounded-lg border-l-4 border-neonPurple hover:bg-neonPurple/20 transition cursor-pointer text-gray-200 hover:text-white";
                         
-                        // HTML Atualizado:
-                        // 1. Texto com break-words (quebra de linha) em vez de truncate
-                        // 2. Ícone de seta SVG à direita
+                        // Exibe nome completo (break-words) e a seta
                         li.innerHTML = `
                             <span class="font-medium text-sm sm:text-base break-words flex-1 pr-4 leading-snug">${song}</span>
                             
@@ -225,14 +227,14 @@
                 }
             } catch (error) {
                 console.error('Erro:', error);
-                resultsList.innerHTML = '<li class="text-red-400 text-center">Erro ao buscar músicas.</li>';
+                resultsList.innerHTML = '<li class="text-red-400 text-center">Erro ao buscar músicas. Verifique o arquivo dados.json.</li>';
                 resultsContainer.classList.remove('hidden');
             } finally {
                 searchBtn.innerText = originalBtnText;
             }
         }
 
-        // Eventos
+        // Eventos de clique e tecla Enter
         document.getElementById('searchButton').addEventListener('click', searchSongs);
         document.getElementById('searchInput').addEventListener('keypress', (event) => {
             if (event.key === 'Enter') searchSongs();
