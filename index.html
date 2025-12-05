@@ -52,14 +52,13 @@
             <img src="image.png" alt="NeoKaraoke Logo" class="relative w-40 h-40 object-contain drop-shadow-2xl">
         </div>
 
-        <h1 class="text-3xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+        <h1 class="text-3xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
             Busca Karaokê
         </h1>
-        <p class="text-gray-400 text-sm mb-8">Encontra a tua música e pede ao DJ!</p>
 
         <div class="w-full flex flex-col sm:flex-row gap-3 mb-8 relative z-10">
             <input type="text" id="searchInput" 
-                placeholder="Nome da música, artista ou digite @" 
+                placeholder="" 
                 class="flex-grow p-4 rounded-xl border border-white/10 bg-white/5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neonPurple focus:border-transparent focus:bg-white/10 transition shadow-lg backdrop-blur-sm"
             >
             <button id="searchButton" 
@@ -112,7 +111,7 @@
 
     <script>
         // ======================================================
-        // ⚠️ CONFIGURAÇÃO DO WHATSAPP (Seu número inserido aqui)
+        // ⚠️ CONFIGURAÇÃO DO WHATSAPP
         const numeroWhatsApp = "5521988550613"; 
         // ======================================================
 
@@ -147,11 +146,11 @@
                 return;
             }
 
-            // Cria a mensagem: "Olá! Sou [Nome] e gostaria de cantar: [Música]"
-            const texto = `Olá! Sou *${nome}* e gostaria de cantar a música: \n\n🎵 *${selectedSong}*`;
+            // --- Formatação da Mensagem Atualizada ---
+            const texto = `PEDIDO DE MÚSICA\nNOME: ${nome}\nMÚSICA: ${selectedSong}`;
+            // ------------------------------------------
+
             const textoCodificado = encodeURIComponent(texto);
-            
-            // Link direto para o teu número
             const url = `https://wa.me/${numeroWhatsApp}?text=${textoCodificado}`;
             
             closeModal();
@@ -178,7 +177,6 @@
             }
 
             try {
-                // Certifique-se que o arquivo 'dados.json' está na mesma pasta
                 const response = await fetch('dados.json');
                 if (!response.ok) throw new Error('Erro ao carregar o arquivo JSON');
                 const songs = await response.json();
@@ -201,7 +199,6 @@
                         // Layout da linha: Texto à esquerda, Seta à direita
                         li.className = "group flex justify-between items-center bg-white/5 p-3 rounded-lg border-l-4 border-neonPurple hover:bg-neonPurple/20 transition cursor-pointer text-gray-200 hover:text-white";
                         
-                        // Exibe nome completo (break-words) e a seta
                         li.innerHTML = `
                             <span class="font-medium text-sm sm:text-base break-words flex-1 pr-4 leading-snug">${song}</span>
                             
@@ -234,7 +231,7 @@
             }
         }
 
-        // Eventos de clique e tecla Enter
+        // Eventos
         document.getElementById('searchButton').addEventListener('click', searchSongs);
         document.getElementById('searchInput').addEventListener('keypress', (event) => {
             if (event.key === 'Enter') searchSongs();
