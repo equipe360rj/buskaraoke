@@ -1,156 +1,194 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Músicas - NeoKaraoke</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Poppins', 'sans-serif'],
-                    },
-                    colors: {
-                        neonPurple: '#a855f7',
-                        neonBlue: '#3b82f6',
-                        glass: 'rgba(30, 41, 59, 0.7)',
-                    }
-                }
-            }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Músicas - NeoKaraoke</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Poppins', 'sans-serif'],
+          },
+          colors: {
+            neonPurple: '#a855f7',
+            neonBlue: '#3b82f6',
+            glass: 'rgba(30, 41, 59, 0.7)',
+          }
         }
-    </script>
-    <style>
-        body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            background-attachment: fixed;
-        }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #4c1d95; border-radius: 4px; }
-    </style>
+      }
+    }
+  </script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      background-attachment: fixed;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #4c1d95;
+      border-radius: 4px;
+    }
+  </style>
 </head>
+
 <body class="text-white flex flex-col items-center min-h-screen p-4">
 
-    <div class="w-full max-w-2xl flex flex-col items-center">
-        
-        <div class="relative group mb-8 mt-6">
-            <div class="absolute -inset-1 bg-gradient-to-r from-neonPurple to-neonBlue rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-            <img src="image.png" alt="NeoKaraoke Logo" class="relative w-40 h-40 object-contain drop-shadow-2xl">
-        </div>
+  <div class="w-full max-w-2xl flex flex-col items-center">
 
-        <h1 class="text-3xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-            Catálogo de Músicas
-        </h1>
-
-        <div class="w-full flex flex-col sm:flex-row gap-3 mb-8 relative z-10">
-            <input type="text" id="searchInput" 
-                placeholder="Digite música, artista ou @ para a lista..." 
-                class="flex-grow p-4 rounded-xl border border-white/10 bg-white/5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neonPurple focus:border-transparent focus:bg-white/10 transition shadow-lg backdrop-blur-sm"
-            >
-            <button id="searchButton" 
-                class="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold py-4 px-8 rounded-xl hover:scale-105 hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition duration-300 ease-in-out transform active:scale-95">
-                🔍 Pesquisar
-            </button>
-        </div>
-
-        <div id="results" class="w-full bg-glass backdrop-blur-md rounded-2xl shadow-2xl p-6 hidden border border-white/10 mb-6">
-            <h2 class="text-xl font-semibold mb-4 text-purple-300 border-b border-white/10 pb-2 flex items-center gap-2">
-                🎵 Músicas Encontradas
-            </h2>
-            <ul id="resultsList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
-                </ul>
-        </div>
-        
-        <footer class="mt-10 text-gray-500 text-sm mb-4">
-            &copy; 2025 NeoKaraoke 360RJ
-        </footer>
-
+    <div class="relative group mb-8 mt-6">
+      <div
+        class="absolute -inset-1 bg-gradient-to-r from-neonPurple to-neonBlue rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200">
+      </div>
+      <img src="image.png" alt="NeoKaraoke Logo" class="relative w-40 h-40 object-contain drop-shadow-2xl">
     </div>
 
-    <script>
-        function removeAccents(str) {
-            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        }
+    <h1 class="text-3xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+      Catálogo de Músicas
+    </h1>
 
-        // --- Funções de Busca ---
+    <div class="w-full flex flex-col sm:flex-row gap-3 mb-4 relative z-10">
+      <input type="text" id="searchInput" placeholder="Digite música ou artista..."
+        class="flex-grow p-4 rounded-xl border border-white/10 bg-white/5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neonPurple focus:border-transparent focus:bg-white/10 transition shadow-lg backdrop-blur-sm">
+      <button id="searchButton"
+        class="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold py-4 px-8 rounded-xl hover:scale-105 hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition duration-300 ease-in-out transform active:scale-95">
+        🔍 Pesquisar
+      </button>
+    </div>
 
-        async function searchSongs() {
-            const queryInput = document.getElementById('searchInput');
-            const query = queryInput.value.trim().toLowerCase();
-            const resultsContainer = document.getElementById('results');
-            const resultsList = document.getElementById('resultsList');
-            const searchBtn = document.getElementById('searchButton');
-            const originalBtnText = searchBtn.innerText;
+    <div class="w-full flex justify-center mb-8 relative z-10">
+      <button id="showAllButton"
+        class="text-sm text-gray-400 hover:text-white border border-white/10 bg-white/5 hover:bg-white/10 px-6 py-2 rounded-full transition-all duration-300">
+        📜 Lista Completa
+      </button>
+    </div>
 
-            searchBtn.innerText = "⏳ ...";
-            resultsList.innerHTML = '';
-            resultsContainer.classList.add('hidden');
+    <div id="results"
+      class="w-full bg-glass backdrop-blur-md rounded-2xl shadow-2xl p-6 hidden border border-white/10 mb-6">
+      <h2 class="text-xl font-semibold mb-4 text-purple-300 border-b border-white/10 pb-2 flex items-center gap-2">
+        🎵 Músicas Encontradas
+      </h2>
+      <ul id="resultsList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+      </ul>
+    </div>
 
-            if (!query) {
-                searchBtn.innerText = originalBtnText;
-                return;
-            }
+    <footer class="mt-10 text-gray-500 text-sm mb-4">
+      &copy; 2025 NeoKaraoke 360RJ
+    </footer>
 
-            try {
-                // Certifique-se que o arquivo 'dados.json' está na mesma pasta
-                const response = await fetch('dados.json');
-                if (!response.ok) throw new Error('Erro ao carregar o arquivo JSON');
-                const songs = await response.json();
+  </div>
 
-                let filteredSongs;
+  <script>
+    function removeAccents(str) {
+      return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
 
-                if (query === '@') {
-                    filteredSongs = songs;
-                } else {
-                    const normalizedQuery = removeAccents(query);
-                    filteredSongs = songs.filter(song => 
-                        removeAccents(song.toLowerCase()).includes(normalizedQuery)
-                    );
-                }
+    let cachedSongs = null;
 
-                if (filteredSongs.length > 0) {
-                    filteredSongs.forEach(song => {
-                        const li = document.createElement('li');
-                        
-                        // Estilo SIMPLES (apenas visual, sem cursor pointer, sem hover forte)
-                        li.className = "flex items-center bg-white/5 p-3 rounded-lg border-l-4 border-neonPurple text-gray-200 select-text";
-                        
-                        // Apenas o texto da música
-                        li.innerHTML = `
-                            <span class="font-medium text-sm sm:text-base break-words leading-snug">${song}</span>
-                        `;
-                        
-                        resultsList.appendChild(li);
-                    });
-                    resultsContainer.classList.remove('hidden');
-                    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                } else {
-                    // Mensagem simples de não encontrado
-                    resultsList.innerHTML = `
+    async function getSongs() {
+      if (cachedSongs) return cachedSongs;
+      try {
+        // Certifique-se que o arquivo 'dados.json' está na mesma pasta
+        const response = await fetch('dados.json');
+        if (!response.ok) throw new Error('Erro ao carregar o arquivo JSON');
+        cachedSongs = await response.json();
+        return cachedSongs;
+      } catch (error) {
+        console.error('Erro:', error);
+        return [];
+      }
+    }
+
+    function renderResults(songs) {
+      const resultsList = document.getElementById('resultsList');
+      const resultsContainer = document.getElementById('results');
+      resultsList.innerHTML = '';
+
+      if (songs.length > 0) {
+        songs.forEach(song => {
+          const li = document.createElement('li');
+          // Estilo SIMPLES
+          li.className = "flex items-center bg-white/5 p-3 rounded-lg border-l-4 border-neonPurple text-gray-200 select-text";
+          li.innerHTML = `<span class="font-medium text-sm sm:text-base break-words leading-snug">${song}</span>`;
+          resultsList.appendChild(li);
+        });
+        resultsContainer.classList.remove('hidden');
+        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        resultsList.innerHTML = `
                         <li class="flex flex-col items-center gap-3 text-center p-6 text-gray-400 bg-white/5 rounded-lg border border-white/10">
                             <span class="text-lg">😕 Nenhuma música encontrada.</span>
                         </li>`;
-                    resultsContainer.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                resultsList.innerHTML = '<li class="text-red-400 text-center">Erro ao buscar músicas. Verifique o arquivo dados.json.</li>';
-                resultsContainer.classList.remove('hidden');
-            } finally {
-                searchBtn.innerText = originalBtnText;
-            }
-        }
+        resultsContainer.classList.remove('hidden');
+      }
+    }
 
-        // Eventos
-        document.getElementById('searchButton').addEventListener('click', searchSongs);
-        document.getElementById('searchInput').addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') searchSongs();
-        });
+    async function searchSongs() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const resultsContainer = document.getElementById('results');
 
-    </script>
+      if (query.length < 3) {
+        resultsContainer.classList.add('hidden');
+        return;
+      }
+
+      const songs = await getSongs();
+      if (!songs || !songs.length) {
+        const resultsList = document.getElementById('resultsList');
+        resultsList.innerHTML = '<li class="text-red-400 text-center">Erro ao buscar músicas.</li>';
+        resultsContainer.classList.remove('hidden');
+        return;
+      }
+
+      const normalizedQuery = removeAccents(query);
+      const filteredSongs = songs.filter(song =>
+        removeAccents(song.toLowerCase()).includes(normalizedQuery)
+      );
+
+      renderResults(filteredSongs);
+    }
+
+    async function showAllSongs() {
+      const btn = document.getElementById('showAllButton');
+      const originalText = btn.innerText;
+      btn.innerText = "⏳ Carregando...";
+
+      const songs = await getSongs();
+      btn.innerText = originalText;
+
+      if (songs && songs.length) {
+        renderResults(songs);
+      } else {
+        const resultsList = document.getElementById('resultsList');
+        const resultsContainer = document.getElementById('results');
+        resultsList.innerHTML = '<li class="text-red-400 text-center">Erro ao buscar músicas.</li>';
+        resultsContainer.classList.remove('hidden');
+      }
+    }
+
+    // Eventos
+    document.getElementById('searchButton').addEventListener('click', searchSongs);
+
+    // Instant Search
+    document.getElementById('searchInput').addEventListener('input', searchSongs);
+
+    // Full List
+    document.getElementById('showAllButton').addEventListener('click', showAllSongs);
+
+  </script>
 </body>
+
 </html>
